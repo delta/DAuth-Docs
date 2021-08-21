@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Docs"
+title: Home
 ---
 
 # Contents
@@ -152,6 +152,6 @@ Accepted Scopes
 
 3. Once the user clicks the button, make a call to `/authorize` endpoint with the query parameters mentioned above
 4. The user will be redirected back to callback_url you’ve provided during client registration and gets code (authorization code) and state as query parameters 
-5. Make a backchannel post request to /oauth/token using query parameters mentioned above.
+5. Make a backchannel post request to `/oauth/token` using query parameters mentioned above.
 6. Response will be token(authorization) and id_token(authentication). Id_token will be sent back only if oidc scope is added in step 3.
-7. Finally, with that token, do a POST request to auth.delta.nitt.edu/resources/user to get the user details. The token must be sent as a bearer token in headers(authorization header).
+7. Finally, with that token, do a POST request to `auth.delta.nitt.edu/resources/user` to get the user details. The token must be sent as a bearer token in headers(authorization header).
