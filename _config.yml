@@ -1,5 +1,4 @@
 theme: jekyll-theme-hacker
 
 title: "DAuth-Docs"
-
-baseurl: "/DAuth-Docs" # the subpath of your site, e.g. /blog
+# baseurl: "/DAuth-Docs" # the subpath of your site, e.g. /blog
