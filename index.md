@@ -52,9 +52,8 @@ A registered client will get some credentials. They include:
 The user has to give consent for your application to use their DAuth information.The authorization endpoint is used to interact with the user and obtain an authorization grant.  
 
 ```
-POST /api/authorize HTTP/1.1
+GET /authorize HTTP/1.1
 Host: auth.delta.nitt.edu
-Content-Type: application/x-www-form-urlencoded
 Request Parameters:
     Required: true
     ParamType: Query
@@ -97,7 +96,7 @@ Request Parameters:
 | client_id | Obtained during client registration. |
 | client_secret | Obtained during client registration. | 
 | grant_type | Use `grant_type=authorization_code` for authorization grant flow. |
-| code | Authorization code obtained through `/api/authorize` call. |
+| code | Authorization code obtained through `/authorize` call. |
 | redirect_uri | The callback_url client has registered with. |
 
 Example: 
@@ -111,7 +110,7 @@ On success, the response would contain
 | --- | --- |
 | access_token |The token for accessing user resources |
 | state | The state sent during authorize call is returned back |
-| id_token | This token is sent if the initial `/api/authorize` call made involves openid in scope param |
+| id_token | This token is sent if the initial `/authorize` call made involves openid in scope param |
 
 ### Key
 
@@ -158,7 +157,7 @@ Accepted Scopes
 2. Integrate the UI.   
     <center><img src="images/login-with-dauth.png" alt="drawing" width="50%" /></center>  
 
-3. Once the user clicks the button, make a call to `/api/authorize` endpoint with the query parameters mentioned above.
+3. Once the user clicks the button, make a call to `/authorize` endpoint with the query parameters mentioned above.
 4. The user will be redirected back to callback_url you’ve provided during client registration and gets code (authorization code) and state as query parameters.
 5. Make a backchannel post request to `/api/oauth/token` using query parameters mentioned above.
 6. Response will be token (authorization) and id_token (authentication). id_token will be sent back only if oidc scope is added in step 3.
