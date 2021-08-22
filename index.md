@@ -69,7 +69,10 @@ Request Parameters:
 | scope | Scopes have been defined in [bottom](#scopes). |
 | nonce | It is a client generated string. It will be present in the token and hence the client can validate the token. |
 
-Example: `client_id=qwdsfgwrTHNHRMYUKTILY&redirect_uri=https%3A%2F%2Fstackoverflow.com%2F&response_type=code&grant_type=authorization_code&state=sdafsdghb&scope=email+openid+profile&nonce=bscsbascbadcsbasccabs`   
+Example: 
+```
+client_id=qwdsfgwrTHNHRMYUKTILY&redirect_uri=https%3A%2F%2Fstackoverflow.com%2F&response_type=code&grant_type=authorization_code&state=sdafsdghb&scope=email+openid+profile&nonce=bscsbascbadcsbasccabs
+```   
 
 If the user authorizes, upon success, the user is redirected back to redirect_uri with authorization code and state as query parameters.
 
@@ -95,7 +98,10 @@ Request Parameters:
 | code | Authorization code obtained through `/authorize` call. |
 | redirect_uri | The callback_url client has registered with. |
 
-Example: `client_id=qwdsfgwrTHNHRMYUKTILY&client_secret=csadvfbgnrwmywtkulifjrknjvnjrnlrnjvlnfvnflv&grant_type=authorization_code&code=f65dbf63a96650e689ef9f800a63ed67177ebe45&redirect_uri=https%3A%2F%2Fstackoverflow.com%2F`  
+Example: 
+```
+client_id=qwdsfgwrTHNHRMYUKTILY&client_secret=csadvfbgnrwmywtkulifjrknjvnjrnlrnjvlnfvnflv&grant_type=authorization_code&code=f65dbf63a96650e689ef9f800a63ed67177ebe45&redirect_uri=https%3A%2F%2Fstackoverflow.com%2F
+```  
   
 On success, the response would contain  
 
@@ -148,7 +154,7 @@ Accepted Scopes
 
 1. Create a DAuth account and register client
 2. UI  
-<center><img src="images/login-with-dauth.png" alt="drawing" width="50%" /></center>  
+    <center><img src="images/login-with-dauth.png" alt="drawing" width="50%" /></center>  
 
 3. Once the user clicks the button, make a call to `/authorize` endpoint with the query parameters mentioned above
 4. The user will be redirected back to callback_url you’ve provided during client registration and gets code (authorization code) and state as query parameters 
