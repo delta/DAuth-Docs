@@ -1,3 +1,5 @@
 theme: jekyll-theme-hacker
 
 title: "DAuth-Docs"
+
+baseurl: "/DAuth-Docs"
