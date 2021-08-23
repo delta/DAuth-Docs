@@ -11,7 +11,7 @@ title: Home
 * [Quick guide to integrating DAuth API](#quick-guide-to-integrating-dauth-api)
 
 # What is DAuth?
-DAuth is an OAuth2.0 based SSO(Single Sign On) for NITT students. It serves to replace existing webmail based login and redundant registration. It is more secure and easier to integrate with your services and use. 
+DAuth is an OAuth2.0 based SSO (Single Sign On) for NITT students. It serves to replace existing webmail based login and redundant registration. It is more secure and easier to integrate with your services and use. 
 To know more about Oauth 2.0, click [here](https://oauth.net/2/).
 
 # Getting Started
@@ -32,27 +32,28 @@ Below is the high-level flow of how your application can authenticate users and 
 
 ### Client Registration
 
-A client i.e. the application making protected resource requests on behalf of the user(resource owner) or authenticating the user has to be signed up before. 
-After creating a DAuth account, navigate to the Clients section and register your application there.
-Homepage URL - This is the homepage URL of your application. 
-Ex: `www.example.com`
+Your application (the client) making protected resource requests on behalf of the user (resource owner) or authenticating the user has to be signed up before. So, after creating a DAuth account, navigate to the Clients section and register your application there.
 
-Callback URL - This is where the user(resource owner) will be redirected back after an authorization request is made. 
-Ex: `www.example.com/callback`  
+Homepage URL - This is the homepage URL of your application.  
+Example: `www.example.com/`  
+Callback URL - This is where the user(resource owner) will be redirected back after an authorization request is made.   
+Example: `www.example.com/callback/`  
 
 ### Client Credentials
 
-A registered client will get some credentials. They include Client ID, Client secret - A unique secret key and a redirectURI - Callback url that you’ve registered the application with.
+A registered client will get some credentials. They include: 
+* Client ID 
+* Client secret - A unique secret key 
+* redirectURI - Callback url that you’ve registered the application with
 
 # Endpoints
 
 ### Authorize Endpoint
-The user has to give consent for your application to use their DAuth information.The authorization endpoint is used to interact with the user and obtain an authorization grant.  The authorization server MUST first verify the identity of the resource owner.
+The user has to give consent for your application to use their DAuth information.The authorization endpoint is used to interact with the user and obtain an authorization grant.  
 
 ```
-POST /authorize HTTP/1.1
+GET /authorize HTTP/1.1
 Host: auth.delta.nitt.edu
-Content-Type: application/x-www-form-urlencoded
 Request Parameters:
     Required: true
     ParamType: Query
@@ -65,23 +66,23 @@ Request Parameters:
 | redirect_uri | This should typically be the callback url provided during client registration. | 
 | response_type | It tells the authorization server which grant to execute. Use `response_type=code` for authorization code. |
 | grant_type | Use `grant_type=authorization_code` for authorization grant flow. |
-| state | Used for security purposes. If this request parameter is set in the request, then it is returned to the application as part of the redirect_uri. | 
+| state | Used for security purposes. It is returned  back to the application as part of the redirect_uri. | 
 | scope | Scopes have been defined in [bottom](#scopes). |
-| nonce | It is a client generated string. It will be present in the token and hence the client can validate the token. |
+| nonce | It is a client generated string. It will be returned in the token and hence the client can validate the token. |
 
 Example: 
 ```
-client_id=qwdsfgwrTHNHRMYUKTILY&redirect_uri=https%3A%2F%2Fstackoverflow.com%2F&response_type=code&grant_type=authorization_code&state=sdafsdghb&scope=email+openid+profile&nonce=bscsbascbadcsbasccabs
+client_id=qwdsfgwrTHNHRMYUKTILY&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback%2F&response_type=code&grant_type=authorization_code&state=sdafsdghb&scope=email+openid+profile&nonce=bscsbascbadcsbasccabs
 ```   
 
 If the user authorizes, upon success, the user is redirected back to redirect_uri with authorization code and state as query parameters.
 
 ### Token
 
-The token endpoint is used by the client to obtain an access token by presenting its authorization grant. The user should be unaware of this request(backchannel communication).
+The token endpoint is used by the client to obtain an access token by presenting its authorization grant. The user should be unaware of this request (backchannel communication).
 
 ```
-POST /oauth/token HTTP/1.1
+POST /api/oauth/token HTTP/1.1
 Host: auth.delta.nitt.edu
 Content-Type: application/x-www-form-urlencoded
 Request Parameters:
@@ -100,7 +101,7 @@ Request Parameters:
 
 Example: 
 ```
-client_id=qwdsfgwrTHNHRMYUKTILY&client_secret=csadvfbgnrwmywtkulifjrknjvnjrnlrnjvlnfvnflv&grant_type=authorization_code&code=f65dbf63a96650e689ef9f800a63ed67177ebe45&redirect_uri=https%3A%2F%2Fstackoverflow.com%2F
+client_id=qwdsfgwrTHNHRMYUKTILY&client_secret=csadvfbgnrwmywtkulifjrknjvnjrnlrnjvlnfvnflv&grant_type=authorization_code&code=f65dbf63a96650e689ef9f800a63ed67177ebe45&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback%2F
 ```  
   
 On success, the response would contain  
@@ -114,7 +115,7 @@ On success, the response would contain
 ### Key
 
 ```
-GET /oauth/oidc/key HTTP/1.1
+GET /api/oauth/oidc/key HTTP/1.1
 Host: auth.delta.nitt.edu
 ```
 This route returns Jwks used to verify id_token.
@@ -123,7 +124,7 @@ This route returns Jwks used to verify id_token.
 
 Request format:
 ```
-POST /resources/user HTTP/1.1
+POST /api/resources/user HTTP/1.1
 Host: auth.delta.nitt.edu
 Authorization: Bearer 02f71255ee95a04d6066de3969bb52f466c90572
 ```   
@@ -138,26 +139,26 @@ The access token is to be sent as a bearer token in headers(authorization header
 
 ### Scopes
 
-The authorization and token endpoints allow the client to specify the scope of the access request using the "scope" request parameter.  
+The authorization and token endpoints allow the client to specify the scope of the access request using the `scope` request parameter.  
 
 Accepted Scopes
 1. openid
-  - Specifying open_id scope sends id_token in the response of /token call.
+  - Specifying open_id scope sends id_token in the response of `/api/token` call.
 2. email
-  - Includes email of user in id token
+  - Includes email of user in id_token
 3. profile
-  - Includes name in id token
+  - Includes name in id_token
 4. user  
   - Gives user object.
 
 # Quick guide to integrating DAuth API 
 
-1. Create a DAuth account and register client
-2. UI  
+1. Create a DAuth account and register the client.
+2. Integrate the UI.   
     <center><img src="images/login-with-dauth.png" alt="drawing" width="50%" /></center>  
 
-3. Once the user clicks the button, make a call to `/authorize` endpoint with the query parameters mentioned above
-4. The user will be redirected back to callback_url you’ve provided during client registration and gets code (authorization code) and state as query parameters 
-5. Make a backchannel post request to `/oauth/token` using query parameters mentioned above.
-6. Response will be token(authorization) and id_token(authentication). Id_token will be sent back only if oidc scope is added in step 3.
-7. Finally, with that token, do a POST request to `auth.delta.nitt.edu/resources/user` to get the user details. The token must be sent as a bearer token in headers(authorization header).
+3. Once the user clicks the button, make a call to `/authorize` endpoint with the query parameters mentioned above.
+4. The user will be redirected back to callback_url you’ve provided during client registration and gets code (authorization code) and state as query parameters.
+5. Make a backchannel post request to `/api/oauth/token` using query parameters mentioned above.
+6. Response will be token (authorization) and id_token (authentication). id_token will be sent back only if oidc scope is added in step 3.
+7. Finally, with that token, do a POST request to `auth.delta.nitt.edu/api/resources/user` to get the user details. The token must be sent as a bearer token in headers (authorization header).
