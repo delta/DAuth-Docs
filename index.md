@@ -162,3 +162,90 @@ Accepted Scopes
 5. Make a backchannel post request to `/api/oauth/token` using query parameters mentioned above.
 6. Response will be token (authorization) and id_token (authentication). id_token will be sent back only if oidc scope is added in step 3.
 7. Finally, with that token, do a POST request to `/api/resources/user` to get the user details. The token must be sent as a bearer token in headers (authorization header).
+
+# Sample Application
+Here's a toy Flask app to illustrate how to implement DAuth integration:
+```python
+from urllib.parse import urlencode
+
+import requests
+from flask import Flask, redirect, render_template, request
+
+app = Flask(__name__)
+
+CLIENT_ID = "<YOUR_CLIENT_ID>"
+CLIENT_SECRET = "<YOUR_CLIENT_SECRET>"
+
+# Note the callback URL must match EXACTLY with
+# the one registrered. Even an extra trailing slash
+# may cause a 400 bad request
+CALLBACK_URL = "http://localhost:5000/callback"
+
+
+@app.route("/")
+def index():
+    # login.html simply contains a a form with
+    # a "Login with DAuth" button and action as login
+    return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    host = "https://auth.delta.nitt.edu/authorize"
+    params = {
+        "client_id": CLIENT_ID,
+        "redirect_uri": CALLBACK_URL,
+        "response_type": "code",
+        "grant_type": "authorization_code",
+        "state": "mystate",
+        "scope": "email openid profile user",
+        "nonce": "mynonce",
+    }
+
+    url = f"{host}?{urlencode(params)}"
+    return redirect(url)
+
+
+@app.route("/callback")
+def callback():
+    code = request.args.get("code")
+
+    # Backchannel request, user doesn't know about this
+    res = requests.post(
+        "https://auth.delta.nitt.edu/api/oauth/token",
+        data={
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": CALLBACK_URL,
+        },
+    )
+
+    access_token = res.json().get("access_token")
+    res = requests.post(
+        "https://auth.delta.nitt.edu/api/resources/user",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    # Contains information about the user
+    # Eg:
+    # {
+    #   "batch": "BTech Third Year",
+    #   "createdAt": "2022-12-23T03:24:07.959Z",
+    #   "email": "106969420@nitt.edu",
+    #   "gender": "MALE",
+    #   "id": 7728,
+    #   "name": "Joe Mama",
+    #   "phoneNumber": "+915555577777",
+    #   "updatedAt": "2024-07-16T17:00:09.628Z"
+    # }
+    user = res.json()
+
+    return user
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+```
